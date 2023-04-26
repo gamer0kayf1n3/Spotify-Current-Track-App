@@ -1,0 +1,133 @@
+<html>
+
+<body>
+    <div id="par">
+        <div id="one">
+            <img src="" id="cover">
+        </div>
+        <div id="two">
+            <div id="twoc">
+                <h1 id="title"></h1>
+                <h2 id="artist"></h2>
+                <div id="myProgress">
+                    <div id="myBar"></div>
+                </div>
+                <img src="" id="scan">
+            </div>
+        </div>
+    </div>
+    <script>
+        var elem = document.getElementById("myBar");
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/api/grab", false);
+        xhr.send();
+        var data = JSON.parse(xhr.responseText);
+        document.querySelector("#cover").src = data.cover;
+        document.querySelector("#title").innerText = data.track_name;
+        document.querySelector("#artist").innerText = data.artists;
+        elem.style.width = data.progress / data.duration * 100 + "%";
+        //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
+        document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
+        console.log(data);
+
+        setInterval(function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/api/grab", false);
+            xhr.send();
+            var data = JSON.parse(xhr.responseText);
+            document.querySelector("#cover").src = data.cover;
+            document.querySelector("#title").innerText = data.track_name;
+            document.querySelector("#artist").innerText = data.artists;
+            elem.style.width = data.progress / data.duration * 100 + "%";
+            document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
+            console.log(data);
+        }, 5000);
+    </script>
+    <style>
+        @font-face {
+            font-family: "Circular Std Black";
+            src: url("static/fonts/CircularStd-Black.otf");
+        }
+        
+        @font-face {
+            font-family: "Circular Std Medium";
+            src: url("static/fonts/CircularStd-Medium.otf");
+        }
+        
+        #title,
+        #artist {
+            word-break: break-all;
+        }
+        
+        body {
+            background-color: black;
+            font-family: Arial;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow-y: hidden;
+        }
+        
+        #title {
+            font-size: 40px;
+            font-weight: normal;
+            font-family: "Circular Std Black", sans-serif;
+        }
+        
+        #artist {
+            font-weight: normal;
+            font-family: "Circular Std Medium", sans-serif;
+        }
+        
+        #par {
+            margin: 0 auto;
+            width: 800px;
+            flex-direction: column;
+        }
+        
+        #cover {
+            width: 400px;
+        }
+        
+        #one {
+            float: left;
+        }
+        
+        #one,
+        #two {
+            flex-grow: 1;
+        }
+        
+        #two {
+            float: left;
+            padding: 0 50px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            width: 380px;
+            box-sizing: border-box;
+        }
+        
+        #myProgress {
+            width: 100%;
+            background-color: darkgray;
+            height: 5px;
+            border-radius: 10px;
+        }
+        
+        #myBar {
+            width: 1%;
+            height: 5px;
+            background-color: white;
+            border-radius: 10px;
+        }
+        
+        #scan {
+            width: 280px;
+        }
+    </style>
+</body>
+
+</html>
