@@ -32,7 +32,6 @@ try:
     ACCESS_TOKEN = open("wow.scta").read().split("\n")[0]
     LOGINREDIR = False
 except:
-
     LOGINREDIR = True
 
 
@@ -118,8 +117,9 @@ def callback():
             })
             open("wow.scta","w").write(access_token+"\n"+refresh_token)
             #return jsonify(access_token=access_token, refresh_token=refresh_token, user=response.json()), 200
-            global LOGINREDIR
+            global LOGINREDIR, ACCESS_TOKEN
             LOGINREDIR = False
+            ACCESS_TOKEN = access_token
             return redirect(url_for("mainsite"))
             
         else:
