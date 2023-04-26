@@ -3,7 +3,7 @@
 <body>
     <div id="par">
         <div id="one">
-            <img src="" id="cover">
+            <img src="" id="cover" draggable="false">
         </div>
         <div id="two">
             <div id="twoc">
@@ -12,55 +12,48 @@
                 <div id="myProgress">
                     <div id="myBar"></div>
                 </div>
-                <img src="" id="scan">
+                <img draggable="false" " id=" scan">
             </div>
         </div>
     </div>
     <script>
-        try{
-        var elem = document.getElementById("myBar");
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/api/grab", false);
-        xhr.send();
-        var data = JSON.parse(xhr.responseText);
-        document.querySelector("#cover").src = data.cover;
-        document.querySelector("#title").innerText = data.track_name;
-        document.querySelector("#artist").innerText = data.artists;
-        elem.style.width = data.progress / data.duration * 100 + "%";
-        //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
-        document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
-        console.log(data);
+        function getSongDataAndUpdateUI() {
+            try {
+                var elem = document.getElementById("myBar");
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "/api/grab", false);
+                xhr.send();
+                var data = JSON.parse(xhr.responseText);
+                document.querySelector("#cover").src = data.cover;
+                document.querySelector("#title").innerText = data.track_name;
+                document.querySelector("#artist").innerText = data.artists;
+                body.style.backgroundImage = `url("${data.cover}")`;
+                elem.style.width = data.progress / data.duration * 100 + "%";
+                //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
+                document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
+                console.log(data);
+            }
+            catch (e) {/*keep running even if error encountered*/ }
         }
-    catch(e){/*keep running even if error encountered*/}
-        setInterval(function() {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/api/grab", false);
-            xhr.send();
-            var data = JSON.parse(xhr.responseText);
-            document.querySelector("#cover").src = data.cover;
-            document.querySelector("#title").innerText = data.track_name;
-            document.querySelector("#artist").innerText = data.artists;
-            elem.style.width = data.progress / data.duration * 100 + "%";
-            document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
-            console.log(data);
-        }, 5000);
+        getSongDataAndUpdateUI()
+        setInterval(getSongDataAndUpdateUI, 5000);
     </script>
     <style>
         @font-face {
             font-family: "Circular Std Black";
             src: url("static/fonts/CircularStd-Black.otf");
         }
-        
+
         @font-face {
             font-family: "Circular Std Medium";
             src: url("static/fonts/CircularStd-Medium.otf");
         }
-        
+
         #title,
         #artist {
             word-break: break-all;
         }
-        
+
         body {
             background-color: black;
             font-family: Arial;
@@ -70,64 +63,70 @@
             align-items: center;
             height: 100vh;
             overflow-y: hidden;
+            -webkit-user-select: none;
+            /* Safari */
+            -ms-user-select: none;
+            /* IE 10 and IE 11 */
+            user-select: none;
+            /* Standard syntax */
         }
-        
+
         #title {
             font-size: 40px;
             font-weight: normal;
             font-family: "Circular Std Black", sans-serif;
         }
-        
+
         #artist {
             font-weight: normal;
             font-family: "Circular Std Medium", sans-serif;
         }
-        
+
         #par {
             margin: 0 auto;
-            width: 800px;
+            width: 900px;
             flex-direction: column;
         }
-        
+
         #cover {
             width: 400px;
         }
-        
+
         #one {
             float: left;
         }
-        
+
         #one,
         #two {
             flex-grow: 1;
         }
-        
+
         #two {
             float: left;
             padding: 0 50px;
             height: 400px;
             display: flex;
             align-items: center;
-            width: 380px;
+            width: 480px;
             box-sizing: border-box;
         }
-        
+
         #myProgress {
             width: 100%;
             background-color: darkgray;
             height: 5px;
             border-radius: 10px;
         }
-        
+
         #myBar {
             width: 1%;
             height: 5px;
             background-color: white;
             border-radius: 10px;
         }
-        
+
         #scan {
-            width: 280px;
+            width: 380px;
         }
     </style>
 </body>
