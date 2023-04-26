@@ -12,7 +12,7 @@
                 <div id="myProgress">
                     <div id="myBar"></div>
                 </div>
-                <img draggable="false" src="" id=" scan">
+                <img draggable="false" src="" id="scan">
             </div>
         </div>
     </div>
@@ -27,13 +27,12 @@
                 document.querySelector("#cover").src = data.cover;
                 document.querySelector("#title").innerText = data.track_name;
                 document.querySelector("#artist").innerText = data.artists;
-                body.style.backgroundImage = `url("${data.cover}")`;
                 elem.style.width = data.progress / data.duration * 100 + "%";
                 //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
                 document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
                 console.log(data);
             }
-            catch (e) {/*keep running even if error encountered*/ }
+            catch (e) { console.log(e)}
         }
         getSongDataAndUpdateUI()
         setInterval(getSongDataAndUpdateUI, 5000);
