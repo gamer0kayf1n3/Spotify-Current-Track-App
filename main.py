@@ -6,13 +6,13 @@ import base64
 
 app = Flask(__name__)
 
-#reload templates
+# Automatically reload templates
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.jinja_env.auto_reload = True
 TEMPLATES_AUTO_RELOAD = True
 
 
-#disable logging for /api/grab
+# Disable logging for a specific route (/api/grab)
 from werkzeug import serving
 parent_log_request = serving.WSGIRequestHandler.log_request
 def log_request(self, *args, **kwargs):
@@ -21,20 +21,20 @@ def log_request(self, *args, **kwargs):
     parent_log_request(self, *args, **kwargs)
 serving.WSGIRequestHandler.log_request = log_request
 
-#client data
+# Spotify API credentials
 client_id = 'ba75218ae3da49b6a23b33b410aeb967'  # Your client id
 client_secret = 'e68db2d054154e51b8bc76120b87d0ad'  # Your secret
 redirect_uri = 'http://localhost/callback'  # Your redirect uri
 SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player'
 
-#check for config files
+# Check if config files exist to determine if the user needs to log in
 try:
     ACCESS_TOKEN = open("wow.scta").read().split("\n")[0]
     LOGINREDIR = False
 except:
     LOGINREDIR = True
 
-#get current track
+# Function to get the current track being played by the user
 def get_current_track(access_token):
     response = requests.get(
         SPOTIFY_GET_CURRENT_TRACK_URL,
@@ -71,18 +71,19 @@ def get_current_track(access_token):
     }
     return current_track_info
 
-# main code
+# Route to get the current track being played
 @app.route("/api/grab")
 def wee():
     return get_current_track(ACCESS_TOKEN)
 
+# Main route for the web app
 @app.route("/")
 def mainsite():
     if LOGINREDIR:
         return redirect(url_for("login"))
     return render_template("main.html")
 
-#code to authenticate user to spotify API
+# Route for user authentication with Spotify API
 @app.route('/login')
 def login():
     state = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=16))
