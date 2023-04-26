@@ -1,38 +1,40 @@
 from flask import Flask, request, redirect, jsonify, url_for, render_template
 import requests
-import json
 import random
 import string
-import os
 import base64
+
 app = Flask(__name__)
+
+#reload templates
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.jinja_env.auto_reload = True
 TEMPLATES_AUTO_RELOAD = True
+
+
+#disable logging for /api/grab
 from werkzeug import serving
-
 parent_log_request = serving.WSGIRequestHandler.log_request
-
-
 def log_request(self, *args, **kwargs):
     if self.path == '/api/grab':
         return
-
     parent_log_request(self, *args, **kwargs)
-
-
 serving.WSGIRequestHandler.log_request = log_request
+
+#client data
 client_id = 'ba75218ae3da49b6a23b33b410aeb967'  # Your client id
 client_secret = 'e68db2d054154e51b8bc76120b87d0ad'  # Your secret
-app = Flask("spot")
+redirect_uri = 'http://localhost/callback'  # Your redirect uri
 SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player'
+
+#check for config files
 try:
     ACCESS_TOKEN = open("wow.scta").read().split("\n")[0]
     LOGINREDIR = False
 except:
-    #autoredir to login
+
     LOGINREDIR = True
-redirect_uri = 'http://localhost/callback'  # Your redirect uri
+
 
 def get_current_track(access_token):
     response = requests.get(
@@ -72,11 +74,13 @@ def get_current_track(access_token):
 @app.route("/api/grab")
 def wee():
     return get_current_track(ACCESS_TOKEN)
+
 @app.route("/")
 def mainsite():
     if LOGINREDIR:
         return redirect(url_for("login"))
     return render_template("main.html")
+
 @app.route('/login')
 def login():
     state = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=16))
@@ -114,6 +118,8 @@ def callback():
             })
             open("wow.scta","w").write(access_token+"\n"+refresh_token)
             #return jsonify(access_token=access_token, refresh_token=refresh_token, user=response.json()), 200
+            global LOGINREDIR
+            LOGINREDIR = False
             return redirect(url_for("mainsite"))
             
         else:
