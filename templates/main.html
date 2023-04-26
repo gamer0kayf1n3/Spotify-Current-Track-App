@@ -17,6 +17,7 @@
         </div>
     </div>
     <script>
+        try{
         var elem = document.getElementById("myBar");
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "/api/grab", false);
@@ -29,7 +30,8 @@
         //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
         document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
         console.log(data);
-
+        }
+    catch(e){/*keep running even if error encountered*/}
         setInterval(function() {
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "/api/grab", false);
