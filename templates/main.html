@@ -30,6 +30,7 @@
                 elem.style.width = data.progress / data.duration * 100 + "%";
                 //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
                 document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
+                document.body.style.backgroundImage = `url("${data.cover}")`;
                 console.log(data);
             }
             catch (e) { console.log(e)}
@@ -57,17 +58,21 @@
             background-color: black;
             font-family: Arial;
             color: white;
+
             display: flex;
             justify-content: center;
             align-items: center;
+
             height: 100vh;
             overflow-y: hidden;
+
             -webkit-user-select: none;
-            /* Safari */
             -ms-user-select: none;
-            /* IE 10 and IE 11 */
             user-select: none;
-            /* Standard syntax */
+
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
 
         #title {
@@ -87,18 +92,9 @@
             flex-direction: column;
         }
 
-        #cover {
-            width: 400px;
-        }
-
-        #one {
-            float: left;
-        }
-
-        #one,
-        #two {
-            flex-grow: 1;
-        }
+        #cover {width: 400px;}
+        #one {float: left;}
+        #one,#two {flex-grow: 1;}
 
         #two {
             float: left;
@@ -109,9 +105,7 @@
             width: 480px;
             box-sizing: border-box;
         }
-        #twoc {
-            width: 100%;
-        }
+        #twoc {width: 100%;}
         #myProgress {
             width: 100%;
             background-color: darkgray;
@@ -126,9 +120,7 @@
             border-radius: 10px;
         }
 
-        #scan {
-            width: 380px;
-        }
+        #scan {width: 380px;}
     </style>
 </body>
 
