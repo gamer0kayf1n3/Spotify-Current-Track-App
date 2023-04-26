@@ -34,7 +34,7 @@ try:
 except:
     LOGINREDIR = True
 
-
+#get current track
 def get_current_track(access_token):
     response = requests.get(
         SPOTIFY_GET_CURRENT_TRACK_URL,
@@ -42,34 +42,36 @@ def get_current_track(access_token):
             "Authorization": f"Bearer {access_token}"
         }
     )
-    json_resp = response.json()
+    try:
+        json_resp = response.json()
+    except requests.exceptions.JSONDecodeError:
+        # nothing's playing at the moment.
+        #haven't thought of what to do here
+        pass#, i guess?
+
     if "error" in json_resp:
         print("encountered eror")
         ref_tok = open("wow.scta").read().split("\n")[1]
         global ACCESS_TOKEN
         ACCESS_TOKEN = refresh_token(ref_tok)
         open("wow.scta","w").write(ACCESS_TOKEN+"\n"+ref_tok)
-    track_id = json_resp['item']['uri']
-    track_name = json_resp['item']['name']
+
+
     artists = [artist for artist in json_resp['item']['artists']]
-    cover  = json_resp['item']['album']['images'][0]["url"]
-    link = json_resp['item']['external_urls']['spotify']
-    prog = json_resp["progress_ms"]
-    dur = json_resp['item']["duration_ms"]
     artist_names = ', '.join([artist['name'] for artist in artists])
 
     current_track_info = {
-        "id": track_id,
-        "track_name": track_name,
+        "id": json_resp['item']['uri'],
+        "track_name": json_resp['item']['name'],
         "artists": artist_names,
-        "link": link,
-        "cover": cover,
-        "progress": prog,
-        "duration": dur
+        "link": json_resp['item']['external_urls']['spotify'],
+        "cover": json_resp['item']['album']['images'][0]["url"],
+        "progress": json_resp["progress_ms"],
+        "duration": json_resp['item']["duration_ms"]
     }
-
     return current_track_info
 
+# main code
 @app.route("/api/grab")
 def wee():
     return get_current_track(ACCESS_TOKEN)
@@ -80,6 +82,7 @@ def mainsite():
         return redirect(url_for("login"))
     return render_template("main.html")
 
+#code to authenticate user to spotify API
 @app.route('/login')
 def login():
     state = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=16))
@@ -139,3 +142,5 @@ def refresh_token(tok):
     
 if __name__ == '__main__':
     app.run(debug=True,port=80)
+else:
+    print("Why'd you import this?")
