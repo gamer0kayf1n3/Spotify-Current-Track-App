@@ -30,7 +30,6 @@
                 elem.style.width = data.progress / data.duration * 100 + "%";
                 //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
                 document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
-                document.body.style.backgroundImage = `url("${data.cover}")`;
                 console.log(data);
             }
             catch (e) { console.log(e)}
@@ -55,8 +54,8 @@
         }
 
         body {
-            background-color: black;
             font-family: Arial;
+            background-color: black;
             color: white;
 
             display: flex;
@@ -69,10 +68,6 @@
             -webkit-user-select: none;
             -ms-user-select: none;
             user-select: none;
-
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
         }
 
         #title {
