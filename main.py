@@ -142,6 +142,8 @@ def refresh_token(tok):
         return access_token 
 
 def get_lyrics(id):
+# Check if directory exists
+    if not os.path.exists("lyric_cache"): os.makedirs("lyric_cache")
     if f"{id}.json" in os.listdir("lyric_cache"):
         with open(f"lyric_cache/{id}.json","r", encoding="utf-8") as f:
             return f.read()
