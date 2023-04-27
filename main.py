@@ -3,6 +3,8 @@ import requests
 import random
 import string
 import base64
+import os
+import json
 
 app = Flask(__name__)
 
@@ -26,7 +28,7 @@ client_id = 'ba75218ae3da49b6a23b33b410aeb967'  # Your client id
 client_secret = 'e68db2d054154e51b8bc76120b87d0ad'  # Your secret
 redirect_uri = 'http://localhost/callback'  # Your redirect uri
 SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player'
-
+SPOTIFY_LYRIC_API_URL = "https://spotify-lyric-api.herokuapp.com/?trackid="
 # Check if config files exist to determine if the user needs to log in
 try:
     ACCESS_TOKEN = open("wow.scta").read().split("\n")[0]
@@ -57,6 +59,7 @@ def get_current_track(access_token):
 
     current_track_info = {
         "id": json_resp['item']['uri'],
+        "idonly": json_resp['item']['id'],
         "track_name": json_resp['item']['name'],
         "artists": artist_names,
         "link": json_resp['item']['external_urls']['spotify'],
@@ -124,6 +127,9 @@ def callback():
         else:
             return jsonify(error='invalid_token'), 401
 
+@app.route("/lyrics")
+def lyrics():
+    return get_lyrics(get_current_track(ACCESS_TOKEN)["idonly"])
 def refresh_token(tok):
     response = requests.post('https://accounts.spotify.com/api/token', data={
         'grant_type': 'refresh_token',
@@ -133,8 +139,17 @@ def refresh_token(tok):
     })
     if response.status_code == 200:
         access_token = response.json()['access_token']
-        return access_token
+        return access_token 
 
+def get_lyrics(id):
+    if f"{id}.json" in os.listdir("lyric_cache"):
+        with open(f"lyric_cache/{id}.json","r", encoding="utf-8") as f:
+            return f.read()
+    response = requests.get(SPOTIFY_LYRIC_API_URL+id)
+    with open(f"lyric_cache/{id}.json","w", encoding="utf-8") as f:
+        jsun = response.json()
+        json.dump(jsun, f)
+    return jsun
     
 if __name__ == '__main__':
     app.run(debug=True,port=80)
