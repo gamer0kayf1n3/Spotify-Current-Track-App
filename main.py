@@ -42,12 +42,7 @@ def get_current_track(access_token):
             "Authorization": f"Bearer {access_token}"
         }
     )
-    try:
-        json_resp = response.json()
-    except requests.exceptions.JSONDecodeError:
-        # nothing's playing at the moment.
-        #haven't thought of what to do here
-        pass#, i guess?
+    json_resp = response.json()
 
     if "error" in json_resp:
         print("encountered eror")
