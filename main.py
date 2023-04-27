@@ -152,7 +152,17 @@ def get_lyrics(id):
         jsun = response.json()
         json.dump(jsun, f)
     return jsun
-    
+
+@app.route("/dump")
+def dump():
+    response = requests.get(
+    SPOTIFY_GET_CURRENT_TRACK_URL,
+    headers={
+        "Authorization": f"Bearer {ACCESS_TOKEN}"
+    }
+    )
+    return jsonify(response.json())
+
 if __name__ == '__main__':
     app.run(debug=True,port=80)
 else:
