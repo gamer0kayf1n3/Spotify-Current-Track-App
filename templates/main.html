@@ -9,9 +9,14 @@
             <div id="twoc">
                 <h1 id="title"></h1>
                 <h2 id="artist"></h2>
+                <br>
                 <div id="myProgress">
                     <div id="myBar"></div>
                 </div>
+                <br>
+                <div id="lyrics">
+                </div>
+                <br>
                 <img draggable="false" src="" id="scan">
             </div>
         </div>
@@ -19,7 +24,8 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const transparent = urlParams.get('transparent');
-
+        start = 0
+        oldSong = ""
         // if the "transparent" parameter exists, remove the background color
         if (transparent) {
         document.body.style.backgroundColor = "transparent";
@@ -34,15 +40,54 @@
                 document.querySelector("#cover").src = data.cover;
                 document.querySelector("#title").innerText = data.track_name;
                 document.querySelector("#artist").innerText = data.artists;
+                if (oldSong != data.track_name) {
+                    getLyrics()
+                }
                 elem.style.width = data.progress / data.duration * 100 + "%";
                 //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
                 document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
                 console.log(data);
+                start = data.progress;
+                scrollToLyric(start);
+                oldSong = data.track_name;
             }
             catch (e) { console.log(e)}
         }
         getSongDataAndUpdateUI()
         setInterval(getSongDataAndUpdateUI, 5000);
+        
+
+        function getLyrics() {
+            try{
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/lyrics", false);
+            xhr.send();
+            var data = JSON.parse(xhr.responseText);
+
+            if (data.error) return;
+            for (lines of data.lines) {
+                lyr_el = document.createElement("p");
+                lyr_el.innerText = lines.words;
+                lyr_el.setAttribute("start", lines.startTimeMs)
+                document.querySelector("#lyrics").appendChild(lyr_el);
+            }
+        }catch(e){console.log(e)}
+        }
+        const lyricPanel = document.querySelector('#lyrics');
+
+        function scrollToLyric(currentTimeMs) {
+        const pElements = lyricPanel.querySelectorAll('p');
+        for (const p of pElements) {
+            const startMs = parseInt(p.getAttribute('start'), 10);
+            if (startMs <= currentTimeMs) {
+            p.scrollIntoView({ behavior: 'smooth',block: 'center',inline: 'center' });
+            }
+        }
+        }
+        setInterval(()=>{
+            scrollToLyric(start);
+            start = start + 100;
+        },100)
     </script>
     <style>
         @font-face {
@@ -110,6 +155,7 @@
             width: 480px;
             box-sizing: border-box;
         }
+        
         #twoc {width: 100%;}
         #myProgress {
             width: 100%;
@@ -126,6 +172,15 @@
         }
 
         #scan {width: 380px;}
+        #lyrics {
+            white-space:pre-wrap;
+            font-family: "Circular Std Medium", sans-serif;
+            text-align: center;
+            height:50px;
+            overflow: hidden;
+            background-color: rgb(32, 32, 32);
+
+        }
     </style>
 </body>
 
