@@ -63,7 +63,7 @@
             xhr.open("GET", "/lyrics", false);
             xhr.send();
             var data = JSON.parse(xhr.responseText);
-
+            document.querySelector("#lyrics").innerHTML = ""
             if (data.error) return;
             for (lines of data.lines) {
                 lyr_el = document.createElement("p");
