@@ -24,11 +24,12 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const transparent = urlParams.get('transparent');
+        const noAnim = urlParams.get('noAnim');
         start = 0
         oldSong = ""
         // if the "transparent" parameter exists, remove the background color
         if (transparent) {
-        document.body.style.backgroundColor = "transparent";
+            document.body.style.backgroundColor = "transparent";
         }
         function getSongDataAndUpdateUI() {
             try {
@@ -80,7 +81,12 @@
         for (const p of pElements) {
             const startMs = parseInt(p.getAttribute('start'), 10);
             if (startMs <= currentTimeMs) {
-            p.scrollIntoView({ behavior: 'smooth',block: 'center',inline: 'center' });
+            if (noAnim) {
+                p.scrollIntoView({block: 'center',inline: 'center' });
+            }
+            else {
+                p.scrollIntoView({behavior: 'smooth', block: 'center',inline: 'center' });
+            }
             }
         }
         }
