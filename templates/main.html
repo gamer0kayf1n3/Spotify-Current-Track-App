@@ -27,6 +27,7 @@
         const lyricsdisable = urlParams.get('lyrics');
         const noAnim = urlParams.get('noAnim');
         start = 0
+        var prog=0,dur = 0
         oldSong = ""
             // if the "transparent" parameter exists, remove the background color
         if (transparent) {
@@ -48,6 +49,7 @@
                         getLyrics()
                     }
                 }
+                prog=data.progress,dur = data.duration
                 elem.style.width = data.progress / data.duration * 100 + "%";
                 //https://scannables.scdn.co/uri/plain/[format]/[background-color-in-hex]/[code-color-in-text]/[size]/[spotify-URI]
                 document.querySelector("#scan").src = `https://scannables.scdn.co/uri/plain/png/000000/white/400/${data.id}`
@@ -109,6 +111,13 @@
             } catch (e) {
                 console.log(e)
             }
+        }
+        var elem = document.getElementById("myBar");
+        if (!noAnim) {
+            setInterval(() => {
+                elem.style.width = prog / dur * 100 + "%";
+                prog=prog+100;
+            }, 100)
         }
         setInterval(() => {
             scrollToLyric(start);
