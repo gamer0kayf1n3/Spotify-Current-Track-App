@@ -44,7 +44,13 @@ def get_current_track(access_token):
             "Authorization": f"Bearer {access_token}"
         }
     )
-    json_resp = response.json()
+    try:
+        json_resp = response.json()
+    except:
+        # failed parsing, possibly spotify client is not open
+        return {
+            "error": "SPOTIFY_NOT_OPEN"
+        }
 
     if "error" in json_resp:
         print("encountered eror")
