@@ -1,5 +1,4 @@
 <html>
-
 <body>
     <div id="par">
         <div id="one">
@@ -79,6 +78,7 @@
                 if (!lyricsdisable) {
                     if (oldSong != data.track_name) {
                         getLyrics()
+                        scrollToLyric(document.getElementById("lyrics").firstElementChild.getAttribute("start"),true)
                     }
                 }
                 prog=data.progress,dur = data.duration
@@ -118,7 +118,7 @@
             }
         }
 
-        function scrollToLyric(currentTimeMs) {
+        function scrollToLyric(currentTimeMs, auto=false) {
 
             try {
                 const lyricPanel = document.querySelector('#lyrics');
@@ -126,7 +126,7 @@
                 for (const p of pElements) {
                     const startMs = parseInt(p.getAttribute('start'), 10);
                     if (startMs <= currentTimeMs) {
-                        if (noAnim) {
+                        if (noAnim||auto) {
                             p.scrollIntoView({
                                 block: 'center',
                                 inline: 'center'
@@ -265,40 +265,39 @@
             background-color: rgb(32, 32, 32);
         }
         .alert {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 300px;
-    padding: 20px;
-    background-color: #f44336;
-    color: white;
-    font-size: 18px;
-    z-index: 9999;
-    display: none;
-    margin-top: 10px;
-    animation-name: slide-in;
-    animation-duration: 0.5s;
-  }
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            padding: 20px;
+            background-color: #f44336;
+            color: white;
+            font-size: 18px;
+            z-index: 9999;
+            display: none;
+            margin-top: 10px;
+            animation-name: slide-in;
+            animation-duration: 0.5s;
+        }
   
-  @keyframes slide-in {
-    from {
-      transform: translateX(100%);
-    }
-  
-    to {
-      transform: translateX(0);
-    }
-  }
-  
-  .alert.show {
-    display: block;
-  }
-  
-  #alert-container.hide {
-    animation-name: slide-out;
-    animation-duration: 0.5s;
-  }
+        @keyframes slide-in {
+            from {
+                transform: translateX(100%);
+            }
+        
+            to {
+                transform: translateX(0);
+            }
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        #alert-container.hide {
+            animation-name: slide-out;
+            animation-duration: 0.5s;
+        }
     </style>
 </body>
-
 </html>
